@@ -25,9 +25,6 @@ class sigesp_rcm_c_sno
 		$this->io_rcbsf= new sigesp_c_reconvertir_monedabsf();
 		require_once("../shared/class_folder/sigesp_c_seguridad.php");
 		$this->seguridad=   new sigesp_c_seguridad();
-		$this->li_candeccon=$_SESSION["la_empresa"]["candeccon"];
-		$this->li_tipconmon=$_SESSION["la_empresa"]["tipconmon"];
-		$this->li_redconmon=$_SESSION["la_empresa"]["redconmon"];
 		$this->ls_codemp=$_SESSION["la_empresa"]["codemp"];
 	}// end function sigesp_rcm_c_soc
 	//-----------------------------------------------------------------------------------------------------------------------------------
@@ -61,6 +58,15 @@ class sigesp_rcm_c_sno
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$lb_valido=true;
 		$this->io_sql_origen->begin_transaction();
+
+		if($lb_valido)
+		{	
+			$lb_valido=$this->uf_convertir_snord();
+		}
+		if($lb_valido)
+		{	
+			$lb_valido=$this->uf_convertir_snosueldoshistoricos();
+		}
 		if($lb_valido)
 		{	
 			$lb_valido=$this->uf_convertir_snocestaticket();
@@ -219,7 +225,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codcestic);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_cestaticket",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_cestaticket",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -227,6 +233,160 @@ class sigesp_rcm_c_sno
 	//-----------------------------------------------------------------------------------------------------------------------------
 
 	//-----------------------------------------------------------------------------------------------------------------------------
+	function uf_convertir_snosueldoshistoricos()
+	{
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//	     Function: snosueldoshistoricos
+		//		   Access: private
+		//	      Returns: lb_valido True si se ejecuto el insert ó False si hubo error en el insert
+		//	  Description: Funcion que selecciona los campos de moneda de la tabla sno_sueldoshistoricos e inserta el valor convertido
+		//	   Creado Por: santi
+		// Fecha Creación: 06/08/2007 								Fecha Última Modificación : 
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		$lb_valido=true;
+		$ls_sql="SELECT codemp, codper, fecsue, ".
+				" suebas, sueint, sueprodia, bonvac, bonfinanio, otrasig, confij, convar".
+				"  FROM sno_sueldoshistoricos".
+				" WHERE codemp='".$this->ls_codemp."'";
+
+		$rs_data=$this->io_sql_origen->select($ls_sql);
+		if($rs_data===false)
+		{ 
+			$this->io_mensajes->message("CLASE->sigesp_rcm_c_sno MÉTODO->SELECT->snosueldoshistoricos ERROR->".$this->io_funciones->uf_convertirmsg($this->io_sql->message));
+			$lb_valido=false;
+		}
+		else
+		{
+			$la_seguridad="";
+			while(($row=$this->io_sql_origen->fetch_row($rs_data))&&($lb_valido))
+			{
+				$ls_codemp= $row["codemp"]; 
+				$ls_codper= $row["codper"];
+				$ls_fecsue= $row["fecsue"];
+				$li_suebas= $row["suebas"];
+				$li_sueint= $row["sueint"];
+				$li_sueprodia= $row["sueprodia"];
+				$li_bonvac= $row["bonvac"];
+				$li_bonfinanio= $row["bonfinanio"];
+				$li_otrasig= $row["otrasig"];
+				$li_confij= $row["confij"];
+				$li_convar= $row["convar"];
+				// Campos a Convertir
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","suebas");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_suebas);
+
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","sueint");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_sueint);
+
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","sueprodia");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_sueprodia);
+
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","bonvac");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_bonvac);
+
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","bonfinanio");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_bonfinanio);
+
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","otrasig");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_otrasig);
+
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","confij");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_confij);
+				
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","convar");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_convar);
+				
+				// Filtros de los Campos
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codemp");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codemp);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+				
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codper");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codper);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","fecsue");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_fecsue);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+				
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_sueldoshistoricos",$la_seguridad);
+			}
+		}		
+		return $lb_valido;
+	}// end function snosueldoshistoricos
+	//-----------------------------------------------------------------------------------------------------------------------------
+
+	//-----------------------------------------------------------------------------------------------------------------------------
+		function uf_convertir_snord()
+	{
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//	     Function: uf_convertir_snord
+		//		   Access: private
+		//	      Returns: lb_valido True si se ejecuto el insert ó False si hubo error en el insert
+		//	  Description: Funcion que selecciona los campos de moneda de la tabla sno_rd e inserta el valor convertido
+		//	   Creado Por: santi consultores santi.com.ve
+		// Fecha Creación: 27/05/2018 								Fecha Última Modificación : 
+		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		$lb_valido=true;
+		$ls_sql="SELECT codemp, codnom, codperi, codper, sc_cuenta, debhab, monpagper".
+				"  FROM sno_rd".
+				" WHERE codemp='".$this->ls_codemp."'";
+		$rs_data=$this->io_sql_origen->select($ls_sql);
+		if($rs_data===false)
+		{ 
+			$this->io_mensajes->message("CLASE->sigesp_rcm_c_sno MÉTODO->SELECT->uf_convertir_snord ERROR->".$this->io_funciones->uf_convertirmsg($this->io_sql->message));
+			$lb_valido=false;
+		}
+		else
+		{
+			$la_seguridad="";
+			while(($row=$this->io_sql_origen->fetch_row($rs_data))&&($lb_valido))
+			{
+				$ls_codemp= $row["codemp"]; 
+				$ls_codnom= $row["codnom"];
+				$ls_codperi= $row["codperi"];
+				$ls_codper= $row["codper"];
+				$ls_sc_cuenta= $row["sc_cuenta"];
+				$ls_debhab= $row["debhab"];
+				$li_monpagper= $row["monpagper"];
+				// Campos a Convertir
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","monpagper");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_monpagper);
+				
+				// Filtros de los Campos
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codemp");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codemp);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+				
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codnom");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codnom);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codperi");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codperi);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codper");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codper);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","sc_cuenta");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_sc_cuenta);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+
+				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","debhab");
+				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_debhab);
+				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
+				
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_rd",$la_seguridad);
+			}
+		}		
+		return $lb_valido;
+	}// end function uf_convertir_snord
+	//-----------------------------------------------------------------------------------------------------------------------------
+
+	//-----------------------------------------------------------------------------------------------------------------------------
+
 	function uf_convertir_snoclasificaciondocente()
 	{
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -281,7 +441,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codcladoc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_clasificaciondocente",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_clasificaciondocente",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -351,7 +511,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codconc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_concepto",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_concepto",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -372,7 +532,8 @@ class sigesp_rcm_c_sno
 		$lb_valido=true;
 		$ls_sql="SELECT codemp, codnom, codper, codconc, valcon, acuemp, acuiniemp, acupat, acuinipat ".
 				"  FROM sno_conceptopersonal".
-				" WHERE codemp='".$this->ls_codemp."'";
+				" WHERE codemp='".$this->ls_codemp."' and (valcon <0 or valcon >0) or (acuemp <0 or acuemp >0) ".
+				"or (acuiniemp <0 or acuiniemp >0) or (acupat <0 or acupat >0) or (acuinipat <0 or acuinipat >0) " ;
 		$rs_data=$this->io_sql_origen->select($ls_sql);
 		if($rs_data===false)
 		{ 
@@ -426,7 +587,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codconc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_conceptopersonal",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_conceptopersonal",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -517,7 +678,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codconc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_conceptovacacion",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_conceptovacacion",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -579,7 +740,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codcons);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_constante",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_constante",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -598,9 +759,9 @@ class sigesp_rcm_c_sno
 		// Fecha Creación: 06/08/2007 								Fecha Última Modificación : 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$lb_valido=true;
-		$ls_sql="SELECT codemp, codnom, codper, codcons, moncon".
+		$ls_sql="SELECT codemp, codnom, codper, codcons, moncon, montopcon".
 				"  FROM sno_constantepersonal".
-				" WHERE codemp='".$this->ls_codemp."'";
+				" WHERE codemp='".$this->ls_codemp."' and (moncon !=0 or montopcon!=0)";
 		$rs_data=$this->io_sql_origen->select($ls_sql);
 		if($rs_data===false)
 		{ 
@@ -617,9 +778,12 @@ class sigesp_rcm_c_sno
 				$ls_codper= $row["codper"];
 				$ls_codcons= $row["codcons"];
 				$li_moncon= $row["moncon"];
+				$li_montopcon= $row["montopcon"];
 				// Campos a Convertir
 				$this->io_rcbsf->io_ds_datos->insertRow("campo","moncon");
 				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_moncon);
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","montopcon");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_montopcon);
 				
 				// Filtros de los Campos
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codemp");
@@ -638,7 +802,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codcons);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_constantepersonal",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_constantepersonal",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -717,7 +881,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codconc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_dt_scg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_dt_scg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -822,7 +986,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codconc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_dt_spg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_dt_spg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -841,7 +1005,8 @@ class sigesp_rcm_c_sno
 		// Fecha Creación: 06/08/2007 								Fecha Última Modificación : 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$lb_valido=true;
-		$ls_sql="SELECT codemp, codnom, codper, anocurper, mescurper, bonvacper, bonfinper, sueintper, apoper, bonextper ".
+		$ls_sql="SELECT codemp, codnom, codper, anocurper, mescurper, bonvacper, bonfinper, sueintper, apoper, bonextper, ".
+				"  bonvacadiper, bonfinadiper, sueintadiper, apopreper ".
 				"  FROM sno_fideiperiodo".
 				" WHERE codemp='".$this->ls_codemp."'";
 		$rs_data=$this->io_sql_origen->select($ls_sql);
@@ -865,7 +1030,22 @@ class sigesp_rcm_c_sno
 				$li_sueintper= $row["sueintper"];
 				$li_apoper= $row["apoper"];
 				$li_bonextper= $row["bonextper"];
+
+				$li_bonvacadiper= $row["bonvacadiper"];
+				$li_bonfinadiper= $row["bonfinadiper"];
+				$li_sueintadiper= $row["sueintadiper"];
+				$li_apopreper= $row["apopreper"];
+
 				// Campos a Convertir
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","bonvacadiper");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_bonvacadiper);
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","bonfinadiper");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_bonfinadiper);
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","sueintadiper");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_sueintadiper);
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","apopreper");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_apopreper);
+
 				$this->io_rcbsf->io_ds_datos->insertRow("campo","bonvacper");
 				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_bonvacper);
 	
@@ -902,7 +1082,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_mescurper);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","I");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_fideiperiodo",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_fideiperiodo",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -970,7 +1150,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codgra);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_grado",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_grado",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1024,7 +1204,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codperi);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_periodo",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_periodo",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1077,7 +1257,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codper);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_personal",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_personal",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1139,7 +1319,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codper);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_personalnomina",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_personalnomina",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1212,7 +1392,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_tipprenom);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prenomina",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prenomina",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1280,7 +1460,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codtippre);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prestamos",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prestamos",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1349,7 +1529,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numamo);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","I");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prestamosamortizado",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prestamosamortizado",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1418,7 +1598,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numcuo);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","I");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prestamosperiodo",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_prestamosperiodo",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1477,7 +1657,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_anopri);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","I");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_primaconcepto",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_primaconcepto",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1546,7 +1726,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codpri);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 								
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_primagrado",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_primagrado",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1654,7 +1834,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codtipper);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 								
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_programacionreporte",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_programacionreporte",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1737,7 +1917,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codper);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_resumen",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_resumen",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1758,7 +1938,7 @@ class sigesp_rcm_c_sno
 		$lb_valido=true;
 		$ls_sql="SELECT codemp, codnom, codperi, codper, codconc, tipsal, valsal, monacusal, salsal ".
 				"  FROM sno_salida ".
-				" WHERE codemp='".$this->ls_codemp."'";
+				" WHERE codemp='".$this->ls_codemp."' and (valsal!=0 or monacusal!=0 or salsal!=0) ";
 		$rs_data=$this->io_sql_origen->select($ls_sql);
 		if($rs_data===false)
 		{ 
@@ -1814,7 +1994,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_tipsal);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_salida",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_salida",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1868,7 +2048,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codtraant);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","I");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_trabajoanterior",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_trabajoanterior",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1946,7 +2126,7 @@ class sigesp_rcm_c_sno
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codvac);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","I");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_vacacpersonal",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("sno_vacacpersonal",$la_seguridad);
 			}
 		}		
 		return $lb_valido;

@@ -25,9 +25,6 @@ class sigesp_rcm_c_spg
 		$this->io_rcbsf= new sigesp_c_reconvertir_monedabsf();
 		require_once("../shared/class_folder/sigesp_c_seguridad.php");
 		$this->seguridad=   new sigesp_c_seguridad();
-		$this->li_candeccon=$_SESSION["la_empresa"]["candeccon"];
-		$this->li_tipconmon=$_SESSION["la_empresa"]["tipconmon"];
-		$this->li_redconmon=$_SESSION["la_empresa"]["redconmon"];
 		$this->ls_codemp=$_SESSION["la_empresa"]["codemp"];
 	}// end function sigesp_rcm_c_spg
 	//-----------------------------------------------------------------------------------------------------------------------------------
@@ -231,7 +228,7 @@ class sigesp_rcm_c_spg
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","spg_cuenta");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_spgcta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_cuentas",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_cuentas",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -345,7 +342,7 @@ class sigesp_rcm_c_spg
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_operacion);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_dt_cmp",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_dt_cmp",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -449,7 +446,7 @@ class sigesp_rcm_c_spg
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_operacion);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_dtmp_cmp",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_dtmp_cmp",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -601,7 +598,7 @@ class sigesp_rcm_c_spg
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_spgcta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_plantillareporte",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("spg_plantillareporte",$la_seguridad);
 			}
 		}		
 		return $lb_valido;

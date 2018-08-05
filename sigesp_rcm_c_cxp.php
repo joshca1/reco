@@ -25,9 +25,6 @@ class sigesp_rcm_c_cxp
 		$this->io_rcbsf= new sigesp_c_reconvertir_monedabsf();
 		require_once("../shared/class_folder/sigesp_c_seguridad.php");
 		$this->seguridad=   new sigesp_c_seguridad();
-		$this->li_candeccon=$_SESSION["la_empresa"]["candeccon"];
-		$this->li_tipconmon=$_SESSION["la_empresa"]["tipconmon"];
-		$this->li_redconmon=$_SESSION["la_empresa"]["redconmon"];
 		$this->ls_codemp=$_SESSION["la_empresa"]["codemp"];
 /*		$ld_fecha=date("Y_m_d_H_i");
 		$ls_nombrearchivo="resultado/resultado_export".$ld_fecha.".txt";
@@ -66,14 +63,14 @@ class sigesp_rcm_c_cxp
 		{	
 			$lb_valido=$this->uf_convertir_cxpdcscg();
 		}
-		if($lb_valido)
-		{	
-			$lb_valido=$this->uf_convertir_cxpanticipos();
-		}
-		if($lb_valido)
-		{	
-			$lb_valido=$this->uf_convertir_cxpdtanticipos();
-		}
+		// if($lb_valido) no existe en enterprise
+		// {	
+		// 	$lb_valido=$this->uf_convertir_cxpanticipos();
+		// }
+		// if($lb_valido) no existe en enterprise
+		// {	
+		// 	$lb_valido=$this->uf_convertir_cxpdtanticipos();
+		// }
 		if($lb_valido)
 		{	
 			$lb_valido=$this->uf_convertir_cxpdcspg();
@@ -214,7 +211,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","sc_cuenta");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_sccuenta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dc_scg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dc_scg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -301,7 +298,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","spg_cuenta");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_spgcuenta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dc_spg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dc_spg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -368,7 +365,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","cod_pro");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codpro);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dt_solicitudes",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dt_solicitudes",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -387,7 +384,7 @@ class sigesp_rcm_c_cxp
 		// Fecha Creación: 20/07/2007 								Fecha Última Modificación : 
 		///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		$lb_valido=true;
-		$ls_sql="SELECT codemp, numrecdoc, codtipdoc, ced_bene, cod_pro,  montotdoc, mondeddoc, moncardoc".
+		$ls_sql="SELECT codemp, numrecdoc, codtipdoc, ced_bene, cod_pro,  montotdoc, mondeddoc, moncardoc, montot".
 				"  FROM cxp_rd".
 				" WHERE codemp='".$this->ls_codemp."'";
 		$rs_data=$this->io_sql_origen->select($ls_sql);
@@ -409,7 +406,8 @@ class sigesp_rcm_c_cxp
 				$li_montotdoc= $row["montotdoc"];
 				$li_mondeddoc= $row["mondeddoc"];
 				$li_moncardoc= $row["moncardoc"];
-				
+				$li_montot= $row["montot"];//agregado nuevo aparece en la tabla enterprise santi
+
 				$this->io_rcbsf->io_ds_datos->insertRow("campo","montotdoc");
 				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_montotdoc);
 	
@@ -418,6 +416,9 @@ class sigesp_rcm_c_cxp
 	
 				$this->io_rcbsf->io_ds_datos->insertRow("campo","moncardoc");
 				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_moncardoc);
+
+				$this->io_rcbsf->io_ds_datos->insertRow("campo","montot");
+				$this->io_rcbsf->io_ds_datos->insertRow("monto",$li_montot);
 	
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codemp");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codemp);
@@ -438,7 +439,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","cod_pro");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codpro);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -519,7 +520,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","numdoccom");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numdoccom);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_cargos",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_cargos",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -600,7 +601,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","numdoccom");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numdoccom);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_deducciones",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_deducciones",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -682,7 +683,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","sc_cuenta");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_sccuenta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_scg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_scg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -764,7 +765,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","spg_cuenta");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_spgcuenta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_spg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_rd_spg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -831,7 +832,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","estmov");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_estmov);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_sol_banco",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_sol_banco",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -908,7 +909,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","numdc");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numdc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_sol_dc",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_sol_dc",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -955,7 +956,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","numsol");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numsol);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_solicitudes",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_solicitudes",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -977,7 +978,7 @@ class sigesp_rcm_c_cxp
 		$rs_data=$this->io_sql_origen->select($ls_sql);
 		if($rs_data===false)
 		{ 
-			$this->io_mensajes->message("CLASE->sigesp_rcm_c_cxp MÉTODO->SELECT->uf_convertir_cxpsolicitudes ERROR->".$this->io_funciones->uf_convertirmsg($this->io_sql->message));
+			$this->io_mensajes->message("CLASE->sigesp_rcm_c_cxp MÉTODO->SELECT->anticipos ERROR->".$this->io_funciones->uf_convertirmsg($this->io_sql->message));
 			$lb_valido=false;
 		}
 		else
@@ -999,11 +1000,11 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","numrecdoc");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numrecdoc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_anticipos",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_anticipos",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
-	}// end function uf_convertir_cxpsolicitudes
+	}// end function anticipos
 	//-----------------------------------------------------------------------------------------------------------------------------
 	function uf_convertir_cxpdtanticipos()
 	{
@@ -1043,7 +1044,7 @@ class sigesp_rcm_c_cxp
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","nrodesc");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numrecdoc);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dt_anticipos",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("cxp_dt_anticipos",$la_seguridad);
 			}
 		}		
 		return $lb_valido;

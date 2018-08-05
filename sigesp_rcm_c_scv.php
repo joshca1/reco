@@ -25,9 +25,6 @@ class sigesp_rcm_c_scv
 		$this->io_rcbsf= new sigesp_c_reconvertir_monedabsf();
 		require_once("../shared/class_folder/sigesp_c_seguridad.php");
 		$this->seguridad=   new sigesp_c_seguridad();
-		$this->li_candeccon=$_SESSION["la_empresa"]["candeccon"];
-		$this->li_tipconmon=$_SESSION["la_empresa"]["tipconmon"];
-		$this->li_redconmon=$_SESSION["la_empresa"]["redconmon"];
 		$this->ls_codemp=$_SESSION["la_empresa"]["codemp"];
 /*		$ld_fecha=date("Y_m_d_H_i");
 		$ls_nombrearchivo="resultado/resultado_export".$ld_fecha.".txt";
@@ -151,10 +148,7 @@ class sigesp_rcm_c_scv
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codper");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codper);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				echo $this->li_candeccon.' li_candeccon<br> ';
-				echo $this->li_tipconmon.' li_tipconmon<br>';
-				echo $this->li_redconmon.' li_redconmon<br>';
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_dt_personal",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_dt_personal",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -226,7 +220,7 @@ class sigesp_rcm_c_scv
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","ced_bene");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_cedbene);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_dt_scg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_dt_scg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -324,7 +318,7 @@ class sigesp_rcm_c_scv
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","ced_bene");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_cedbene);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_dt_spg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_dt_spg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -371,7 +365,7 @@ class sigesp_rcm_c_scv
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codotrasi");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codotrasi);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_otrasasignaciones",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_otrasasignaciones",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -418,7 +412,7 @@ class sigesp_rcm_c_scv
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codsolvia");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codsolvia);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_solicitudviatico",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_solicitudviatico",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -465,7 +459,7 @@ class sigesp_rcm_c_scv
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codtar");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codtar);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_tarifakms",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_tarifakms",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -535,7 +529,7 @@ class sigesp_rcm_c_scv
 				$this->io_rcbsf->io_ds_filtro->insertRow("filtro","codtar");
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codtar);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_tarifas",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scv_tarifas",$la_seguridad);
 			}
 		}		
 		return $lb_valido;

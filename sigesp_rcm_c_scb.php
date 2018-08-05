@@ -25,9 +25,6 @@ class sigesp_rcm_c_scb
 		$this->io_rcbsf= new sigesp_c_reconvertir_monedabsf();
 		require_once("../shared/class_folder/sigesp_c_seguridad.php");
 		$this->seguridad=   new sigesp_c_seguridad();
-		$this->li_candeccon=$_SESSION["la_empresa"]["candeccon"];
-		$this->li_tipconmon=$_SESSION["la_empresa"]["tipconmon"];
-		$this->li_redconmon=$_SESSION["la_empresa"]["redconmon"];
 		$this->ls_codemp=$_SESSION["la_empresa"]["codemp"];
 	}// end function sigesp_rcm_c_scb
 	//-----------------------------------------------------------------------------------------------------------------------------------
@@ -196,7 +193,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numcol);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_colocacion",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_colocacion",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -263,7 +260,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_mesano);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_conciliacion",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_conciliacion",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -338,7 +335,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numope);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_dt_cmp_ret",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_dt_cmp_ret",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -413,7 +410,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numope);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_dt_cmp_ret_op",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_dt_cmp_ret_op",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -496,7 +493,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_numsolpag);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_dt_movbco",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_dt_movbco",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -568,7 +565,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_fecmesano);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_errorconcbco",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_errorconcbco",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -644,7 +641,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_estmov);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -736,7 +733,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_documento);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_scg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_scg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -819,7 +816,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_documento);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_spg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_spg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -906,7 +903,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_documento);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_spgop",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_spgop",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -984,7 +981,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_documento);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_spi",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movbco_spi",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1055,7 +1052,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codopecaj);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 				
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcaja",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcaja",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1128,7 +1125,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_estcol);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1216,7 +1213,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_codded);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol_scg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol_scg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1299,7 +1296,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_spgcta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol_spg",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol_spg",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
@@ -1377,7 +1374,7 @@ class sigesp_rcm_c_scb
 				$this->io_rcbsf->io_ds_filtro->insertRow("valor",$ls_spicta);
 				$this->io_rcbsf->io_ds_filtro->insertRow("tipo","C");
 
-				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol_spi",$this->li_candeccon,$this->li_tipconmon,$this->li_redconmon,$la_seguridad);
+				$lb_valido=$this->io_rcbsf->uf_reconvertir_datos("scb_movcol_spi",$la_seguridad);
 			}
 		}		
 		return $lb_valido;
